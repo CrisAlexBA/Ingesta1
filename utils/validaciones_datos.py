@@ -1,12 +1,8 @@
 import re
-from logs import registrar_error
+from utils.manejador_logs import registrar_error
 
 def validar_datos(df, nombre_archivo):
-    columnas_requeridas = [
-        'Nombre del estudiante', 'Código del estudiante', 'Materia', 
-        'Nota', 'Periodo académico', 'Programa académico'
-    ]
-    
+    columnas_requeridas = ['Nombre del estudiante', 'Código del estudiante', 'Materia', 'Nota', 'Periodo académico', 'Programa académico']
     errores_encontrados = False
 
     for columna in columnas_requeridas:
@@ -36,18 +32,6 @@ def validar_datos(df, nombre_archivo):
 
         if 'Periodo académico' in df.columns and not re.match(r'^\d{4}-[12]$', str(row['Periodo académico'])):
             registrar_error(f"Error en {nombre_archivo}, fila {index+1}: Periodo inválido")
-            errores_encontrados = True
-
-        if 'Nombre del estudiante' in df.columns and not re.match(r"^[A-Za-zÁÉÍÓÚáéíóúñÑ' ]+$", str(row['Nombre del estudiante'])):
-            registrar_error(f"Error en {nombre_archivo}, fila {index+1}: Nombre con caracteres inválidos")
-            errores_encontrados = True
-
-        if 'Materia' in df.columns and not re.match(r"^[A-Za-z0-9ÁÉÍÓÚáéíóúñÑ' ]+$", str(row['Materia'])):
-            registrar_error(f"Error en {nombre_archivo}, fila {index+1}: Materia con caracteres inválidos")
-            errores_encontrados = True
-
-        if 'Programa académico' in df.columns and not re.match(r"^[A-Za-zÁÉÍÓÚáéíóúñÑ' ]+$", str(row['Programa académico'])):
-            registrar_error(f"Error en {nombre_archivo}, fila {index+1}: Programa con caracteres inválidos")
             errores_encontrados = True
 
     return not errores_encontrados
