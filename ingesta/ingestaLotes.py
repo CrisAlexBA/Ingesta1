@@ -27,14 +27,23 @@ def procesar_lote(nombre_bucket, archivos, tamaño_lote=5, max_tamaño_mb=100):
 
 def procesar_lote_archivos(nombre_bucket, lote):
     """
-    Procesa cada archivo en el lote, trasladándolo a su ubicación en el Data Lake.
+    Procesa cada archivo en el lote, trasladándolo a su ubicación en el Data Lake
+    según la estructura de almacenamiento para investigaciones.
     """
     for archivo in lote:
         try:
+            # Obtener el nombre del archivo y el grupo de la ruta
             nombre_archivo = archivo.split('/')[-1]
-            grupo, proyecto = nombre_archivo.replace('.pdf', '').replace('.docx', '').split('_')
-            ruta_destino = f"informes_investigacion/grupo={grupo}/proyecto={proyecto}/{nombre_archivo}"
+            grupo = archivo.split('/')[1]  # 'grupo' es la segunda parte de la ruta en S3
+
+            # Generar la ruta de destino en el Data Lake
+            ruta_destino = f"investigaciones/{grupo}/{nombre_archivo}"
+
+            # Copiar el archivo al destino en el Data Lake
             copy_source = {'Bucket': nombre_bucket, 'Key': archivo}
             s3.copy_object(CopySource=copy_source, Bucket=nombre_bucket, Key=ruta_destino)
+            print(f"Archivo {nombre_archivo} procesado y almacenado en {ruta_destino}")
+
         except Exception as e:
             registrar_error(f"Error al procesar el archivo {archivo}: {e}")
+            print(f"Error al procesar el archivo {archivo}: {e}")

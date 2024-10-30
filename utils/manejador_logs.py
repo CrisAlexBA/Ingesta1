@@ -2,7 +2,7 @@ import datetime
 import boto3
 
 s3 = boto3.client('s3')
-bucket_name = 'uq-datalake'
+bucket_name = 'uq-datalake-test'
 log_file_s3 = 'archivos/log_errores.txt'  # Ruta en S3 para el archivo de log
 
 def registrar_error(error_msg):
