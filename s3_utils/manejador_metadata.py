@@ -1,15 +1,13 @@
 import datetime
 
-def generar_metadata(semestre, facultad, programa):
+def generar_metadata(semestre, grupo):
     return {
         "sem": semestre,
-        "area": "academico",
-        "fac": facultad,
-        "prog": programa,
-        "tipo_doc": "notas",
-        "subarea": facultad,
+        "area": "investigaciones",
+        "grupo": grupo,
+        "tipo_doc": "informe_investigativo",
         "fecha_creacion": datetime.datetime.now().isoformat(),
-        "descripcion": f"notas de estudiantes del programa {programa} para el semestre {semestre}",
+        "descripcion": f"informe del grupo de investigacion {grupo} para el semestre {semestre}",
         "confidencialidad": "restringido",
-        "tipo_archivo": "notas_estudiantes"
+        "tipo_archivo": "informe_investigativo"
     }

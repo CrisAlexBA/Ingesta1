@@ -1,4 +1,6 @@
+from utils.funciones_auxiliares import obtener_semestre
 from utils.manejador_logs import registrar_error
+from s3_utils.manejador_metadata import generar_metadata
 import boto3
 
 s3 = boto3.client('s3')
@@ -35,14 +37,22 @@ def procesar_lote_archivos(nombre_bucket, lote):
             # Obtener el nombre del archivo y el grupo de la ruta
             nombre_archivo = archivo.split('/')[-1]
             grupo = archivo.split('/')[1]  # 'grupo' es la segunda parte de la ruta en S3
+            semestre = obtener_semestre()  # Obtener el semestre
+
+            # Aquí puedes agregar la lógica para procesar el contenido del archivo
+            # (por ejemplo, extraer información, etc.)
+            # ...
 
             # Generar la ruta de destino en el Data Lake
-            ruta_destino = f"investigaciones/{grupo}/{nombre_archivo}"
+            ruta_destino = f"raw/semestre={semestre}/area=investigaciones/grupo={grupo}/{nombre_archivo}"
 
-            # Copiar el archivo al destino en el Data Lake
+            # Subir el archivo a la nueva ubicación en el Data Lake
             copy_source = {'Bucket': nombre_bucket, 'Key': archivo}
             s3.copy_object(CopySource=copy_source, Bucket=nombre_bucket, Key=ruta_destino)
-            print(f"Archivo {nombre_archivo} procesado y almacenado en {ruta_destino}")
+
+            # Eliminar el archivo de S3 después de procesarlo
+            s3.delete_object(Bucket=nombre_bucket, Key=archivo)
+            print(f"Archivo {nombre_archivo} procesado y almacenado en {ruta_destino}.")
 
         except Exception as e:
             registrar_error(f"Error al procesar el archivo {archivo}: {e}")
